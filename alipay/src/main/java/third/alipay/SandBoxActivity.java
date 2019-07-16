@@ -1,5 +1,10 @@
 package third.alipay;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -7,12 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import com.alipay.sdk.app.AuthTask;
+import com.alipay.sdk.app.EnvUtils;
 import com.alipay.sdk.app.PayTask;
 
 import java.util.Map;
@@ -20,11 +21,11 @@ import java.util.Map;
 /**
  * Created by Administrator on 2019/7/13.
  */
-public class MainActivity extends AppCompatActivity {
+public class SandBoxActivity extends AppCompatActivity {
 
 
     Handler handler;
-    public static final String APPID = "2019071565789795";
+    public static final String APPID = "2016101000655055";
     public static final String PID = "";
     public static final String TARGET_ID = "";
 
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX);
     }
 
     @Override
@@ -169,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                PayTask alipay = new PayTask(MainActivity.this);
+                PayTask alipay = new PayTask(SandBoxActivity.this);
                 Map<String,String> result = alipay.payV2(orderInfo,true);
 
                 Message msg = new Message();
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // 构造AuthTask 对象
-                AuthTask authTask = new AuthTask(MainActivity.this);
+                AuthTask authTask = new AuthTask(SandBoxActivity.this);
                 // 调用授权接口，获取授权结果
                 Map<String, String> result = authTask.authV2(authInfo, true);
 
