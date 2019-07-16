@@ -37,6 +37,7 @@ public class SandBoxActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX);
         super.onCreate(savedInstanceState);
         System.out.println("*********  " + getClass().getSimpleName() + ".onCreate  *********");
         setContentView(R.layout.activity_main);
@@ -66,7 +67,27 @@ public class SandBoxActivity extends AppCompatActivity {
             }
         });
 
-        EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX);
+
+        //成功结果
+//        {
+//            "alipay_trade_app_pay_response": {
+//            "code": "10000",
+//                    "msg": "Success",
+//                    "app_id": "2016101000655055",
+//                    "auth_app_id": "2016101000655055",
+//                    "charset": "utf-8",
+//                    "timestamp": "2019-07-16 17:08:25",
+//                    "out_trade_no": "071617072842319",
+//                    "total_amount": "0.01",
+//                    "trade_no": "2019071622001435711000035050",
+//                    "seller_id": "2088102178971635"},
+//            "sign": "oAprqsV+qI67HoLxQTPU7XJpjs/WBx6RVKZBNPO+GByaiOdKAY1ZL64JYANet4bYDBElqWL4FsxpJTOoZEnUGqp3SUm3aRx6PstJqAEgqazPYQXa45qyImM3VL044HntBxTtKOn/JrA/CRSYH9oI23ZP2UNZ2nq/rB6QVeH9tw1z7gTM6Bojvey/glGrMStChSLS33KPN0SEcZJTjaAbexE5022lmJ+3jvzd+n54D/zgPAonSbhKJrc8Dxz6UeSoTeHo5ay7MKBf+GdMVxpJei7ez+9FfM1PN08wypF5uTV3Up7y8iEr+7q4L8Vd3J00nBwR5O+AtNmqNraN1inE1Q==",
+//            "sign_type": "RSA2"
+//        }
+
+
+
+
     }
 
     @Override
