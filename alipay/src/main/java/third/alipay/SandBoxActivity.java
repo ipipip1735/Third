@@ -16,6 +16,7 @@ import com.alipay.sdk.app.AuthTask;
 import com.alipay.sdk.app.EnvUtils;
 import com.alipay.sdk.app.PayTask;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,7 +31,6 @@ public class SandBoxActivity extends AppCompatActivity {
     public static final String TARGET_ID = "";
 
     public static final String RSA2_PRIVATE = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDVv1c5DRvhyAvgevh4uaMMpww5jQT3X+eWehYsBSRNZXSv990pgGXdU0yRnJL6I8u0fODx8wtHBL5EUntBjddwCfTB2IByhcskY79CskxErPqgYmPAq7VEtq4KC1GFfIgVmx2wPcFpqab7tc5w2khUG63QWjeBj7+GefnQmFSTKhGMRzjuLU+Sy4U+gNA1vVYXR3miAPdT1DXgn1QGvo2R3UWiLZY5qN6lE5c1nz1zur8DhkLpw7u7A5iobfbkK9/1uYq/aFAnm57N92HsIaQmE1q7COofP74V0HhQ2xb5SU4CMIfJ8K2HWYuAKTMapDTBwcmJw348e3ruh7VcO7hfAgMBAAECggEBAJ2VtLuWA5FhCAiXAKsYybHhUmz3n8q1RSs2lTQdEleRTgcR6VbYl8El0ZSk5+NNErjdPIaEljLkt1XtrXt2FHhAjtd/Q6urIkqQ04hbpUkYcqpd/4cj0L95IzS6hX6xgi7Trn6p+PdqoXZ/4lRnSd3gjjPG35dAoIaHVPtJ40ie6Q1YgRG5qnjvOBtLH6OrVmtcZaJ7r0JsI9WLiTTCUwiQ0BEZvm8QeRRRYiSb1lih1pr9OzGmGb0nKQQyKmRgaz2JfHi9XOrsr5VRYhJOmDkn/c2Ry69Kx/HQFVOmlhKLdHoajVmbKqpZHfnDxsO0yAxZ7aZHRJad04KsR4XlHXkCgYEA9LXc+fjgnRSFjXTAnBuDBOTCvUgG8IedTHupReChG3FKt3z3aIMAFQo0EvVMDwJ72yB010fmuthC4lz8Ld+gtRadGp+BKASa+8MNkxMXlFZhhP4Ec7gt8mNs1kPQjWyRh8y5gho9gYMnmU7N8ZBTMMmqH9IRqVu45GB9MZa5tAsCgYEA35vKjTwU4M7k/1iafYMXvAN1qBzIz8Yb00EYPy2dWqwL/sXOLgxfAIX9aadUgZjsiWswSaDOr27YxrkVBMvLSORlHYRYMYTA8rgVokIz24oH6tP85SdFC5jUcHResT0mXc6upwPEFTLxiwIaFAvSKfUgH9kqKw+48Gw0/DZmzX0CgYEAqeay3CO935HmAAa1zC0V1In3429k0g92WSnqpweFFAaet7LeHAQIRJNnAFqrSiiRUdzBAs97FPMdzQh+VmNTsydWQKvKArzf1jjg7eJtlqI65xlugeG4lPgPEtzWqbpdeIndqsUJOyiSj9C1ECkCeXcq1RkHBi0WvAl6IrnhiW0CgYAc2RWFqRWsdyS2CLFNtgbu26dnO+dwXseiNoixRepCE2YsxUo3SKNNBvxNkCfn3FnP1MNTDGr92RggcypSBxS/369n4nYaVV0rMzKfT1kvXpxs4FKFIc7Xkyz9IRZCWXhEq/B+XY8DiSH+ZBQHOAsyHIy7byHwkkOyyNMBIueaZQKBgHdVYbJDiPgAMQwNG9g+A2bOia3KfdMpcmRXMTfb2+eDeqadDwoTYIWZUK2l021e6LksEbai1sSsrSpuxguZE6xHEDVQU/IjafO+B9jpmPL+NdUtLPUzd3euT/oB3ULah7UZSuAtJafbc7pdY7snA93sHz3PNw4yu8Vzt7bNFPbG";
-    public static final String RSA_PRIVATE = "";
 
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_AUTH_FLAG = 2;
@@ -177,7 +177,10 @@ public class SandBoxActivity extends AppCompatActivity {
 
 
         boolean rsa2 = (RSA2_PRIVATE.length() > 0);
-        Map<String, String> params = OrderInfoUtil2_0.buildOrderParamMap(APPID, rsa2);
+        Map<String, String> params = buildOrderParamMap();
+
+
+
         String orderParam = OrderInfoUtil2_0.buildOrderParam(params);
         System.out.println("orderParam is " + orderParam);
 
@@ -277,4 +280,26 @@ public class SandBoxActivity extends AppCompatActivity {
         String version = payTask.getVersion();
         System.out.println("version is " + version);
     }
+
+
+
+
+    public static Map<String, String> buildOrderParamMap() {
+        Map<String, String> keyValues = new HashMap<String, String>();
+
+        //公有参数
+        keyValues.put("app_id", APPID);
+        keyValues.put("charset", "utf-8");
+        keyValues.put("method", "alipay.trade.app.pay");
+        keyValues.put("sign_type", "RSA2");
+        keyValues.put("timestamp", "2016-07-29 16:55:53");
+        keyValues.put("version", "1.0");
+        keyValues.put("biz_content", "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"" + getOutTradeNo() +  "\"}");
+
+        return keyValues;
+    }
+
+
+
+
 }
