@@ -19,6 +19,8 @@ import com.alipay.sdk.app.PayTask;
 import java.util.HashMap;
 import java.util.Map;
 
+import static third.alipay.MainActivity.RSA_PRIVATE;
+
 /**
  * Created by Administrator on 2019/7/13.
  */
@@ -197,7 +199,7 @@ public class SandBoxActivity extends AppCompatActivity {
             @Override
             public void run() {
                 PayTask alipay = new PayTask(SandBoxActivity.this);
-                Map<String,String> result = alipay.payV2(orderInfo,true);
+                Map<String,String> result = alipay.payV2(orderInfo,true);//异步操作
 
                 Message msg = new Message();
                 msg.what = SDK_PAY_FLAG;
@@ -233,8 +235,8 @@ public class SandBoxActivity extends AppCompatActivity {
         String sign = OrderInfoUtil2_0.getSign(authInfoMap, privateKey, rsa2);
         System.out.println("sign is "+ sign);
 
-
         final String authInfo = info + "&" + sign;
+
         Runnable authRunnable = new Runnable() {
 
             @Override
@@ -294,7 +296,9 @@ public class SandBoxActivity extends AppCompatActivity {
         keyValues.put("sign_type", "RSA2");
         keyValues.put("timestamp", "2016-07-29 16:55:53");
         keyValues.put("version", "1.0");
-        keyValues.put("biz_content", "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"" + getOutTradeNo() +  "\"}");
+
+        //自定义参数
+        keyValues.put("biz_content", "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"9527\"}");
 
         return keyValues;
     }
