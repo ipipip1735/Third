@@ -105,12 +105,12 @@ public class OrderInfoUtil2_0 {
             String key = keys.get(i);
             String value = map.get(key);
             sb.append(buildKeyValue(key, value, true));
-            sb.append("&");
+            sb.append("&");//中间拼接增加&
         }
 
         String tailKey = keys.get(keys.size() - 1);
         String tailValue = map.get(tailKey);
-        sb.append(buildKeyValue(tailKey, tailValue, true));
+        sb.append(buildKeyValue(tailKey, tailValue, true));//最后拼接不加&
 
         return sb.toString();
     }
