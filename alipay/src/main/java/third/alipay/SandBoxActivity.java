@@ -16,8 +16,19 @@ import com.alipay.sdk.app.AuthTask;
 import com.alipay.sdk.app.EnvUtils;
 import com.alipay.sdk.app.PayTask;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static third.alipay.MainActivity.RSA_PRIVATE;
 
@@ -32,7 +43,8 @@ public class SandBoxActivity extends AppCompatActivity {
     public static final String PID = "";
     public static final String TARGET_ID = "";
 
-    public static final String RSA2_PRIVATE = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDVv1c5DRvhyAvgevh4uaMMpww5jQT3X+eWehYsBSRNZXSv990pgGXdU0yRnJL6I8u0fODx8wtHBL5EUntBjddwCfTB2IByhcskY79CskxErPqgYmPAq7VEtq4KC1GFfIgVmx2wPcFpqab7tc5w2khUG63QWjeBj7+GefnQmFSTKhGMRzjuLU+Sy4U+gNA1vVYXR3miAPdT1DXgn1QGvo2R3UWiLZY5qN6lE5c1nz1zur8DhkLpw7u7A5iobfbkK9/1uYq/aFAnm57N92HsIaQmE1q7COofP74V0HhQ2xb5SU4CMIfJ8K2HWYuAKTMapDTBwcmJw348e3ruh7VcO7hfAgMBAAECggEBAJ2VtLuWA5FhCAiXAKsYybHhUmz3n8q1RSs2lTQdEleRTgcR6VbYl8El0ZSk5+NNErjdPIaEljLkt1XtrXt2FHhAjtd/Q6urIkqQ04hbpUkYcqpd/4cj0L95IzS6hX6xgi7Trn6p+PdqoXZ/4lRnSd3gjjPG35dAoIaHVPtJ40ie6Q1YgRG5qnjvOBtLH6OrVmtcZaJ7r0JsI9WLiTTCUwiQ0BEZvm8QeRRRYiSb1lih1pr9OzGmGb0nKQQyKmRgaz2JfHi9XOrsr5VRYhJOmDkn/c2Ry69Kx/HQFVOmlhKLdHoajVmbKqpZHfnDxsO0yAxZ7aZHRJad04KsR4XlHXkCgYEA9LXc+fjgnRSFjXTAnBuDBOTCvUgG8IedTHupReChG3FKt3z3aIMAFQo0EvVMDwJ72yB010fmuthC4lz8Ld+gtRadGp+BKASa+8MNkxMXlFZhhP4Ec7gt8mNs1kPQjWyRh8y5gho9gYMnmU7N8ZBTMMmqH9IRqVu45GB9MZa5tAsCgYEA35vKjTwU4M7k/1iafYMXvAN1qBzIz8Yb00EYPy2dWqwL/sXOLgxfAIX9aadUgZjsiWswSaDOr27YxrkVBMvLSORlHYRYMYTA8rgVokIz24oH6tP85SdFC5jUcHResT0mXc6upwPEFTLxiwIaFAvSKfUgH9kqKw+48Gw0/DZmzX0CgYEAqeay3CO935HmAAa1zC0V1In3429k0g92WSnqpweFFAaet7LeHAQIRJNnAFqrSiiRUdzBAs97FPMdzQh+VmNTsydWQKvKArzf1jjg7eJtlqI65xlugeG4lPgPEtzWqbpdeIndqsUJOyiSj9C1ECkCeXcq1RkHBi0WvAl6IrnhiW0CgYAc2RWFqRWsdyS2CLFNtgbu26dnO+dwXseiNoixRepCE2YsxUo3SKNNBvxNkCfn3FnP1MNTDGr92RggcypSBxS/369n4nYaVV0rMzKfT1kvXpxs4FKFIc7Xkyz9IRZCWXhEq/B+XY8DiSH+ZBQHOAsyHIy7byHwkkOyyNMBIueaZQKBgHdVYbJDiPgAMQwNG9g+A2bOia3KfdMpcmRXMTfb2+eDeqadDwoTYIWZUK2l021e6LksEbai1sSsrSpuxguZE6xHEDVQU/IjafO+B9jpmPL+NdUtLPUzd3euT/oB3ULah7UZSuAtJafbc7pdY7snA93sHz3PNw4yu8Vzt7bNFPbG";
+    public static final String RSA2_PRIVATE = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxN1yZ6J8nu0nkuenXzRLqhSwAIQFL3wSuhziUs0H848yXC+dJDASOp0psVCagCFZE2deVhgROrYCbk2H4/iTqaBcyDJWgqpNgH54rc6WNxP09lhF/p2JtNqnZm/9offKq7WFwFO05rH8HAtsLa0HFZYcEoVFYu0rPl+5FGtJn+MaCOkG7x8G05Z9px3OsPfxmhPx0YnXba3QsRHoiuemHhD8k12AdPpoG/zV7XjtsAIPdvtJRJSK1IZABIXHn+2YqHsxdmbbJkm4z0m1IrbRDtX3vEpo5dn/WauZLkndy6Xybxdv5Pu3JrJMYdr87zJRsB+6TmXPjvUyUipykmVrXAgMBAAECggEAQCzxPtcr06KSVt8wnLKqF/2T+pP5OTWRJ3bWeZsU2XTRIR3xatWMTPCuFd6/ghKi0xokZQR8SNWyDiToRNgcHDsHs1s1UFKVPikVCV0+5cEhiAzxV04RacVy6tgAPSHnIBkIwSMC6XDbK3nQQylbTxW+OGIG6GAi7lxxr9rPuVCWbiQADeEKJ9fXHU1SXcoQ++JRxSGDoP2nye3QgoHr0PTvewQGR4yggpF01XcneiHxCw9nmxA7WSbWVfFXlsiLADjDwkf9oZvo9qTu7sRiL4kdE12kIl4cc1VRTS/9cBxUrfXtFHCu8t2iyqf4jGJyuuC+DJrZQHOiVxExgD8B+QKBgQDgo42qXRke3mt73dGsJalNLxpv0/5XDTXs0G0mLBXhZgsIic5B8I/DnY57D9KDQahTJwpmjg/D5JzmQpV9eb8e9j8IM0BQQMZd0CY8TQkIgBKB0M4FuqsMNcb7+qXYXXwuobvf0trJIFcaj6RknmWBJyEOFqdL3ef5kp6YiRRkLQKBgQDJ9PRtq3424BPI3JXxhFqk0ZN0wvWUxhrxJel87X/yZZ2Uy5o/0qBGYBl1sDP7M5LIFT69849+Gj47TU/Nd8I38Sk8BsGDryuVpxRiY5+RwifZMlWKxsK/sLcFvbywg4zxtFQ6qmEhKSDFV9pP9CuuwWWAnMdKqpRN8OUS939JkwKBgHvAnmKkNxqSXZQ3dzLm7IXg1SeWGh/K31I+4GKPFt69YIarpD0fUZPqUHvrE4XLvfdRIqGs0XKRlv4i4EfnsipUbhUOZvfPN3inGulNZxSPuaJabaUqWOC5H43hX0v69FacMuvzNSRn9JRlXaMwv6qO697fC/r3nLwY0dYmbl1hAoGBALvMCtdIl29T41HuvYf+uYN2VxZGjLMxnLANvxcqisXO9D//LIqYw+1tQ3+KwGuhQ6bHCrb8G7z5jlD6zXCVIod+vAdTiPN5GqBo462yUhnqX7+67IzF0ycJnse57hJ94byJIaID+ZoqcozP6vRaa5xvvoFgSHoIMSxhC8MdXsH9AoGAMH5ty8kpvYNLL+CLa+zBFVc/kmUGxMFcIv44svJHW3IqQNdutLHHC7Io8G/rImk8EFunkrDwYTPahZupt04uXYs3d8P3f2xGdERho6b6eb3vkyZvyFQDefhGXzdt2NVf0TQ1g65ACYwHAaBqGCQ0aGcy6wRXOOUxa4dhfTz12h4=";
+    public static final String ALIPAY_RSA2_PUBLIC = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu0fFgKWgPf1ku6ii8zmYGxwP3d2cYUBU4yBQ9IqARAqx1ObLJ2FJRLNdLJm8B33dHw228c2f67+i/Hxg4tj6GG4PATZ8YLmyJvXAfqkEVIM2RpREz+GPr4FMm9CrX0kGQCt2/MCo8GFxA3XxZGKVmKmR18pX6TH1aFVXkyMGIlxbGudvR02bcJMhJ9s+OHIlytZUavTttpvZJjZ+wTp+u4viNaFpVtbo8A6Gm72izp0AHUy729eFmN51rdNcbxUUGqs7essSyDuT2nkydKypANdTr/vPvFFAyPHp2Rrm0540IAHykyHafXeoZHly/hxGArZ1cfHgvTB1e9JXbsxeVwIDAQAB";
 
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_AUTH_FLAG = 2;
@@ -60,7 +72,7 @@ public class SandBoxActivity extends AppCompatActivity {
                 System.out.println("msg.arg1 is " + msg.arg1);
                 System.out.println("msg.arg2 is " + msg.arg2);
                 System.out.println("msg.what is " + msg.what);
-                Map<String,String> map = (Map<String, String>) msg.obj;
+                Map<String, String> map = (Map<String, String>) msg.obj;
 
                 System.out.println(map);
 
@@ -86,8 +98,6 @@ public class SandBoxActivity extends AppCompatActivity {
 //            "sign": "oAprqsV+qI67HoLxQTPU7XJpjs/WBx6RVKZBNPO+GByaiOdKAY1ZL64JYANet4bYDBElqWL4FsxpJTOoZEnUGqp3SUm3aRx6PstJqAEgqazPYQXa45qyImM3VL044HntBxTtKOn/JrA/CRSYH9oI23ZP2UNZ2nq/rB6QVeH9tw1z7gTM6Bojvey/glGrMStChSLS33KPN0SEcZJTjaAbexE5022lmJ+3jvzd+n54D/zgPAonSbhKJrc8Dxz6UeSoTeHo5ay7MKBf+GdMVxpJei7ez+9FfM1PN08wypF5uTV3Up7y8iEr+7q4L8Vd3J00nBwR5O+AtNmqNraN1inE1Q==",
 //            "sign_type": "RSA2"
 //        }
-
-
 
 
     }
@@ -179,9 +189,7 @@ public class SandBoxActivity extends AppCompatActivity {
 
 
         boolean rsa2 = (RSA2_PRIVATE.length() > 0);
-        Map<String, String> params = buildOrderParamMap();
-
-
+        Map<String, String> params = OrderInfoUtil2_0.buildOrderParamMap(APPID, rsa2);
 
         String orderParam = OrderInfoUtil2_0.buildOrderParam(params);
         System.out.println("orderParam is " + orderParam);
@@ -199,7 +207,7 @@ public class SandBoxActivity extends AppCompatActivity {
             @Override
             public void run() {
                 PayTask alipay = new PayTask(SandBoxActivity.this);
-                Map<String,String> result = alipay.payV2(orderInfo,true);//异步操作
+                Map<String, String> result = alipay.payV2(orderInfo, true);//异步操作
 
                 Message msg = new Message();
                 msg.what = SDK_PAY_FLAG;
@@ -209,10 +217,8 @@ public class SandBoxActivity extends AppCompatActivity {
         };
 
 
-
         // 必须异步调用
         new Thread(payRunnable).start();
-
 
 
     }
@@ -220,6 +226,37 @@ public class SandBoxActivity extends AppCompatActivity {
 
     public void stop(View view) {
         System.out.println("~~button.stop~~");
+
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec pubPKCS8 = new X509EncodedKeySpec(Base64.decode(ALIPAY_RSA2_PUBLIC));
+            PublicKey pubKey = keyFactory.generatePublic(pubPKCS8);
+            System.out.println(pubKey.toString());
+
+
+
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(pubKey);
+            String data = "{\"code\":\"10000\",\"msg\":\"Success\",\"app_id\":\"2016101000655055\",\"auth_app_id\":\"2016101000655055\",\"charset\":\"utf-8\",\"timestamp\":\"2019-08-07 04:22:46\",\"out_trade_no\":\"080704221820463\",\"total_amount\":\"0.01\",\"trade_no\":\"2019080722001435711000047941\",\"seller_id\":\"2088102178971635\"}";
+
+            signature.update(data.getBytes());
+
+            String sign = "jCu4D8AMkh3JUCOulG74CsbA0/jvyIyYZzOjwmVxPIKEMmuczCKMEACV4ujSTextCdh1EYCGZqednGrqyoAYVy8+2/oUvxUvS1TxepwkqusNTA5IoEEAlEWexgvqg5ZwLBV+igBYL9idDW8w16foOM3f4v8Y3IOmk/ebGlQ4Uv2MhiEDETWRkuVj7FIZ60KTETCeRiq4EfeInYy9ce4h2Vi9/grtMJbo4EJbkhMK6M89BZxeW9pT4+kbZQJkVKUm5BF0wsLdz0xZTP7cFev+InsH/A9yqY/zK8X7KGt0XFt0RhxbsVwQ+TQtKNACHI2edfg/wzjDmUplUY6pTpJHKg==";
+            boolean verifies = signature.verify(Base64.decode(sign));
+            System.out.println("signature verifies: " + verifies);
+
+
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -229,11 +266,11 @@ public class SandBoxActivity extends AppCompatActivity {
         boolean rsa2 = (RSA2_PRIVATE.length() > 0);
         Map<String, String> authInfoMap = OrderInfoUtil2_0.buildAuthInfoMap(PID, APPID, TARGET_ID, rsa2);
         String info = OrderInfoUtil2_0.buildOrderParam(authInfoMap);
-        System.out.println("info is "+ info);
+        System.out.println("info is " + info);
 
         String privateKey = rsa2 ? RSA2_PRIVATE : RSA_PRIVATE;
         String sign = OrderInfoUtil2_0.getSign(authInfoMap, privateKey, rsa2);
-        System.out.println("sign is "+ sign);
+        System.out.println("sign is " + sign);
 
         final String authInfo = info + "&" + sign;
 
@@ -284,8 +321,6 @@ public class SandBoxActivity extends AppCompatActivity {
     }
 
 
-
-
     public static Map<String, String> buildOrderParamMap() {
         Map<String, String> keyValues = new HashMap<String, String>();
 
@@ -302,8 +337,6 @@ public class SandBoxActivity extends AppCompatActivity {
 
         return keyValues;
     }
-
-
 
 
 }
