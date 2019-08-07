@@ -321,22 +321,4 @@ public class SandBoxActivity extends AppCompatActivity {
     }
 
 
-    public static Map<String, String> buildOrderParamMap() {
-        Map<String, String> keyValues = new HashMap<String, String>();
-
-        //公有参数
-        keyValues.put("app_id", APPID);
-        keyValues.put("charset", "utf-8");
-        keyValues.put("method", "alipay.trade.app.pay");
-        keyValues.put("sign_type", "RSA2");
-        keyValues.put("timestamp", "2016-07-29 16:55:53");
-        keyValues.put("version", "1.0");
-
-        //自定义参数
-        keyValues.put("biz_content", "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"9527\"}");
-
-        return keyValues;
-    }
-
-
 }
