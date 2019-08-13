@@ -51,11 +51,12 @@ public class SandBoxActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX);
         super.onCreate(savedInstanceState);
         System.out.println("*********  " + getClass().getSimpleName() + ".onCreate  *********");
         setContentView(R.layout.activity_main);
 
+
+        EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -200,14 +201,19 @@ public class SandBoxActivity extends AppCompatActivity {
 
 
         final String orderInfo = orderParam + "&" + sign;
+        System.out.println(orderInfo);
 
+//        final String orderInfo1 = "alipay_sdk=alipay-sdk-java-3.7.110.ALL&app_id=2016101000655055&biz_content=%7B%22body%22%3A%22my+body%22%2C%22out_trade_no%22%3A%221565595816574%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22subject%22%3A%22xxx%22%2C%22timeout_express%22%3A%2230m%22%2C%22total_amount%22%3A%220.01%22%7D&charset=UTF-8&format=json&method=alipay.trade.app.pay&notify_url=http%3A%2F%2Fpc.yssp888.com%2Ftest.php&sign=RKIxV%2Bbuq9Kkl1o3g%2B0tlar16wimkOXboCMhR8tgFJJ8%2Fyk%2BLJ4QdP8ZLgFPi2qf0Di70%2FyNPxRJt0i2VpLPUBIMApk0aNDbjtPTFjARngNcx6Evn%2FyuMDIfSAqsDsvomQIc6cykVPaNkxHMNP2IoZHyI2No%2F%2BAwOWPdk18bEkLvDbgKgLmx0aVWaWHIcBzCY0RqD6dH9SuNBz9Mm6hvNf38grM%2BlGF%2FuQsKahtrH4PB2AnDWlKBkez6bW0EghKFiaCuUs8rA5qkJDdSrn9%2Fg1G3pffYAIALrE6FYirhBLGV9ZXW50qppGUInTJSc7TtEl%2B8aMJ7X2fec0KWCySjjQ%3D%3D&sign_type=RSA2&timestamp=2019-08-12+15%3A43%3A36&version=1.0";
+//        final String orderInfo1 = "&lt;form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipaydev.com/gateway.do?charset=UTF-8' method='POST'&gt;&lt;input type='hidden' name='biz_content' value='{&quot;out_trade_no&quot;:1565659920,&quot;subject&quot;:&quot;XXXX&quot;,&quot;total_amount&quot;:10.1}'/&gt;&lt;input type='hidden' name='app_id' value='2016101000655055'/&gt;&lt;input type='hidden' name='version' value='1.0'/&gt;&lt;input type='hidden' name='format' value='json'/&gt;&lt;input type='hidden' name='sign_type' value='RSA2'/&gt;&lt;input type='hidden' name='method' value='alipay.trade.app.pay'/&gt;&lt;input type='hidden' name='timestamp' value='2019-08-13 01:32:00'/&gt;&lt;input type='hidden' name='alipay_sdk' value='alipay-sdk-php-20180705'/&gt;&lt;input type='hidden' name='notify_url' value='http://pc.yssp888.com/test.php'/&gt;&lt;input type='hidden' name='charset' value='UTF-8'/&gt;&lt;input type='hidden' name='sign' value='IFP9relApNxcDh/brh6ObHU3Aoh5z6vRIQj4MD3S4NE7sg1nyWy+e4tFuZr9B9oLXHJFGKw5OQM7+S5C2xwSsIcFbQu58qDzIDf2DUpbQxPH5iJL8uX/cM8uKOd4w6JByIG3mMXvhAqiU1eKVM4ULAt1VnVNNcC8+YjL9Lb1kqnnxeE096sKag4dyomFVV8C1/OfNUQVt10NO1ZxTU52zkhhrWhfiqcFqumu2w4ArJlAhyB11dtHaJ3WIGYHkqcChxa1ao5ubKnMm9U0qc3sIATN9jwP9CXLbX7lFgcId5ybciJ96KbOQc5BOYKHFgOjbyNN3qRbyD1AJKM7FsqQqA=='/&gt;&lt;input type='submit' value='ok' style='display:none;'&gt;&lt;/form&gt;&lt;script&gt;document.forms['alipaysubmit'].submit();&lt;/script&gt;";
+        final String orderInfo1 = "alipay_sdk=alipay-sdk-java-3.7.110.ALL&app_id=2016101000655055&biz_content=%7B%22body%22%3A%22my+body%22%2C%22out_trade_no%22%3A%221565660319388%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22subject%22%3A%22xxx%22%2C%22timeout_express%22%3A%2230m%22%2C%22total_amount%22%3A%220.01%22%7D&charset=UTF-8&format=json&method=alipay.trade.app.pay&notify_url=http%3A%2F%2Fpc.yssp888.com%2Ftest.php&sign=jlf61rMJ6eQ3p7LyCAHBwSZIPisAqLyZEcBnwSRAvDlEB48mSoqGsBCu1mutJjt%2BN41RIHpAjArNEfHZdYx1lICTs6G5v0Meqh0irUCYPmFK7BbWsetjsnNZHtntqh7f6xKL%2BjB36brJodUDa%2BQiP2JeCVPMVDjQ9880W%2FdxHMZoQK7N9BOm1w8NRNm97U6eYWCMqkpPcdt%2BWU3303uCbqyI4cwjqBM5lpjy%2FCY%2BdnHN9ZxckuPCZwehutRG5UnFLliT7caRf%2F6vtDAVf%2FNJT5okZSQtdqZ5js2n104gS808XBfzrHaTZ%2FgeMLa2bczZp%2FjIia8OiJpd3zxIMJUA1g%3D%3D&sign_type=RSA2&timestamp=2019-08-13+09%3A38%3A39&version=1.0";
+        System.out.println(orderInfo1);
 
         Runnable payRunnable = new Runnable() {
 
             @Override
             public void run() {
                 PayTask alipay = new PayTask(SandBoxActivity.this);
-                Map<String, String> result = alipay.payV2(orderInfo, true);//异步操作
+                Map<String, String> result = alipay.payV2(orderInfo1, true);//异步操作
 
                 Message msg = new Message();
                 msg.what = SDK_PAY_FLAG;
